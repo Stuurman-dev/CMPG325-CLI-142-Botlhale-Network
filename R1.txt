@@ -1,0 +1,132 @@
+	
+R1#show running-config
+Building configuration...
+
+Current configuration : 2033 bytes
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname R1
+!
+!
+!
+enable secret 5 $1$mERr$73LcmVJQXktnlED6.KZmj.
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+username admin privilege 15 secret 5 $1$mERr$VNl1HrkoeysF3ddlTBve81
+!
+!
+license udi pid CISCO2911/K9 sn FTX15240FRC-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip ssh version 2
+ip domain-name botlhale.local
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0.10
+ encapsulation dot1Q 10
+ ip address 172.30.94.1 255.255.255.128
+ ip nat inside
+!
+interface GigabitEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 172.30.94.129 255.255.255.192
+ ip access-group RECORDS-PROTECT out
+ ip nat inside
+!
+interface GigabitEthernet0/0.30
+ encapsulation dot1Q 30
+ ip address 172.30.95.1 255.255.255.128
+ ip nat inside
+!
+interface GigabitEthernet0/0.99
+ encapsulation dot1Q 99 native
+ ip address 172.30.94.193 255.255.255.224
+ ip nat inside
+!
+interface GigabitEthernet0/1
+ ip address 203.0.113.2 255.255.255.248
+ ip nat outside
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip nat inside source list 1 interface GigabitEthernet0/1 overload
+ip nat inside source static 172.30.94.130 203.0.113.3 
+ip classless
+ip route 0.0.0.0 0.0.0.0 203.0.113.1 
+!
+ip flow-export version 9
+!
+!
+access-list 1 permit 172.30.94.0 0.0.1.255
+ip access-list extended RECORDS-PROTECT
+ permit tcp 172.30.94.0 0.0.0.127 host 172.30.94.131 eq www
+ permit icmp 172.30.94.0 0.0.0.127 host 172.30.94.131
+ permit ip 172.30.94.192 0.0.0.31 any
+ permit tcp any host 172.30.94.130 eq www
+ permit icmp any host 172.30.94.130
+ deny ip any any
+access-list 10 permit host 198.51.100.10
+access-list 10 permit 172.30.94.192 0.0.0.31
+!
+banner motd ^C Authorised access only ^C
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ access-class 10 in
+ login local
+ transport input ssh
+!
+!
+!
+end
+
+
+R1#
